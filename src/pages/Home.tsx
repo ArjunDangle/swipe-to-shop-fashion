@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -17,15 +18,15 @@ export default function Home() {
     dispatch({ type: 'SET_ERROR', payload: null });
 
     try {
-      // Add a small delay for smoother UX
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Smoother timing for better UX
+      await new Promise(resolve => setTimeout(resolve, 600));
       
       const recommendations = await getRecommendations(searchQuery);
       dispatch({ type: 'SET_QUERY', payload: searchQuery });
       dispatch({ type: 'SET_RECOMMENDATIONS', payload: recommendations });
       
-      // Add another small delay before navigation for smooth transition
-      await new Promise(resolve => setTimeout(resolve, 300));
+      // Shorter delay for snappier feel
+      await new Promise(resolve => setTimeout(resolve, 200));
       navigate('/browse');
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: 'Failed to fetch recommendations. Please try again.' });
@@ -45,20 +46,20 @@ export default function Home() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2,
+        staggerChildren: 0.15,
         delayChildren: 0.1
       }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.6,
-        ease: "easeOut"
+        duration: 0.5,
+        ease: [0.25, 0.46, 0.45, 0.94]
       }
     }
   };
@@ -141,9 +142,9 @@ export default function Home() {
           <motion.div 
             className="relative group"
             whileHover={{ scale: state.isLoading ? 1 : 1.02 }}
-            transition={{ type: "spring", stiffness: 300 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-[#28262B] to-[#A9A29C] rounded-3xl blur opacity-20 group-hover:opacity-30 transition-opacity" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#28262B] to-[#A9A29C] rounded-3xl blur opacity-20 group-hover:opacity-30 transition-opacity duration-300" />
             <input
               type="text"
               placeholder="What are you looking for today?"
@@ -155,8 +156,9 @@ export default function Home() {
             />
             <motion.div
               className="absolute right-5 top-1/2 transform -translate-y-1/2"
-              whileHover={{ scale: state.isLoading ? 1 : 1.1 }}
+              whileHover={{ scale: state.isLoading ? 1 : 1.15 }}
               whileTap={{ scale: state.isLoading ? 1 : 0.9 }}
+              transition={{ type: "spring", stiffness: 500, damping: 15 }}
             >
               {state.isLoading ? (
                 <motion.div
@@ -173,59 +175,57 @@ export default function Home() {
           <motion.button
             onClick={handleStartBrowsing}
             disabled={!searchQuery.trim() || state.isLoading}
-            className="w-full bg-gradient-to-r from-[#28262B] to-[#1a1a1a] text-white py-4 px-8 rounded-3xl font-semibold text-lg hover:from-[#2a2828] hover:to-[#1c1c1c] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl flex items-center justify-center gap-3 group relative overflow-hidden"
+            className="w-full bg-gradient-to-r from-[#28262B] to-[#1a1a1a] text-white py-4 px-8 rounded-3xl font-semibold text-lg hover:from-[#2a2828] hover:to-[#1c1c1c] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl flex items-center justify-center gap-3 group relative overflow-hidden"
             whileHover={{ 
-              scale: searchQuery.trim() && !state.isLoading ? 1.02 : 1,
-              boxShadow: "0 20px 40px rgba(40, 38, 43, 0.3)"
+              scale: searchQuery.trim() && !state.isLoading ? 1.03 : 1,
+              y: searchQuery.trim() && !state.isLoading ? -2 : 0,
             }}
-            whileTap={{ scale: 0.98 }}
+            whileTap={{ 
+              scale: 0.97,
+              y: 0,
+            }}
+            transition={{ 
+              type: "spring", 
+              stiffness: 600, 
+              damping: 25,
+              duration: 0.15
+            }}
             variants={itemVariants}
           >
-            {state.isLoading && (
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-[#2a2828] to-[#1c1c1c]"
-                initial={{ x: '-100%' }}
-                animate={{ x: '100%' }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              />
-            )}
-            {state.isLoading ? (
-              <>
-                <motion.div
-                  className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                />
-                <motion.span
-                  key="loading-text"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  Finding Products...
-                </motion.span>
-              </>
-            ) : (
-              <>
-                <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <motion.span
-                  key="start-text"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  Start Browsing
-                </motion.span>
-              </>
-            )}
+            <motion.div
+              className="flex items-center gap-3"
+              animate={state.isLoading ? { opacity: [1, 0.7, 1] } : { opacity: 1 }}
+              transition={state.isLoading ? { duration: 1.5, repeat: Infinity } : {}}
+            >
+              {state.isLoading ? (
+                <>
+                  <motion.div
+                    className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
+                  <span>Finding Products...</span>
+                </>
+              ) : (
+                <>
+                  <motion.div
+                    whileHover={{ rotate: 15, scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
+                    <ShoppingBag className="w-5 h-5" />
+                  </motion.div>
+                  <span>Start Browsing</span>
+                </>
+              )}
+            </motion.div>
           </motion.button>
 
           {state.error && (
             <motion.div
               className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, scale: 0.9, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
             >
               <p className="text-red-400 text-sm font-medium">{state.error}</p>
             </motion.div>
@@ -245,12 +245,27 @@ export default function Home() {
             <motion.div
               key={feature.label}
               className="text-center"
-              whileHover={{ y: -5 }}
-              transition={{ delay: index * 0.1 }}
+              whileHover={{ 
+                y: -8, 
+                scale: 1.05,
+              }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 400, 
+                damping: 25,
+                delay: index * 0.05 
+              }}
             >
-              <div className="w-12 h-12 bg-[#D5CCC7]/20 rounded-xl flex items-center justify-center mx-auto mb-2 backdrop-blur-sm">
+              <motion.div 
+                className="w-12 h-12 bg-[#D5CCC7]/20 rounded-xl flex items-center justify-center mx-auto mb-2 backdrop-blur-sm"
+                whileHover={{
+                  backgroundColor: "rgba(213, 204, 199, 0.3)",
+                  boxShadow: "0 8px 25px rgba(40, 38, 43, 0.15)"
+                }}
+                transition={{ duration: 0.2 }}
+              >
                 <feature.icon className="w-5 h-5 text-[#A9A29C]" />
-              </div>
+              </motion.div>
               <p className="text-[#A9A29C] text-xs font-medium">{feature.label}</p>
             </motion.div>
           ))}

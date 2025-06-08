@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -37,19 +38,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -99,5 +93,62 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  }
+
+  /* Custom scrollbar styles */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #A9A29C;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #28262B;
+  }
+}
+
+/* Custom animations for swipe gestures */
+@keyframes swipeRightSuccess {
+  0% { transform: translateX(0) rotate(0deg); }
+  100% { transform: translateX(100vw) rotate(30deg); opacity: 0; }
+}
+
+@keyframes swipeLeftReject {
+  0% { transform: translateX(0) rotate(0deg); }
+  100% { transform: translateX(-100vw) rotate(-30deg); opacity: 0; }
+}
+
+.swipe-right {
+  animation: swipeRightSuccess 0.5s ease-out forwards;
+}
+
+.swipe-left {
+  animation: swipeLeftReject 0.5s ease-out forwards;
+}
+
+/* Touch-friendly styles */
+@media (max-width: 768px) {
+  body {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  input, textarea, select {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
   }
 }
